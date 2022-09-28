@@ -1,31 +1,33 @@
 from random import randint
+import numpy as np
 import copy
 
+# Word bank
+w_list = ['nursing', 'cat', 'chartreuse', 'commit', 'python']
 
-
-# Edit this with words you want to find
-w_list = ['learn', 'cat', 'howdy', 'commit', 'python']
-
-# Edit this if you want to output the hidden words in capital letters
+# toggle case sensitivity 
 print_key = False
 
 class Puzzle():
 	'''Creates a word search puzzle '''
 	
 	def __init__(self, word_list, rows = 15, cols = 15):
-		
+		'''Required Variables: a list of words
+	   Optional variables: number of rows and columns
+	   Note: if rows and columns are likely too small, they will be resized'''
 		self.rows = rows
 		self.cols = cols
 		self.word_list = word_list
 		
 		max_length = 0
-		for word in word_list: 
+		for word in word_list: # determines the length of the longest word
 			length = len(word)
 			if length > max_length:
 				max_length = length
- 
+		# picks a row and column minimum length based on whichever is largest. Min size is 10 x 10. 
+		min_length = max([max_length + 4, int(np.floor( 0.002* (len(word_list)-20) - 0.05 * (len(word_list)-20)**2 + 25)), 10])
 		
-		if self.rows < min_length: 
+		if self.rows < min_length: # a check to see if your board is too small for the words
 			self.rows = min_length
 
 		if self.cols < min_length:
@@ -50,6 +52,8 @@ class Puzzle():
 			print('   '.join(row))
 		print()
 	
+	# these next few functions read the board in rows either left to right, right to left, up to down, diagonally, etc.
+	# if you are curious about the output, you can write output = MyPuzzle.s_rows(); print(output) at the bottom
 	def s_rows(self, board = None):
 		if board == None:
 			board = copy.deepcopy(self.board)
@@ -132,6 +136,10 @@ class Puzzle():
 			rows[i] = row[::-1]
 		return rows
 	
+	# calls reading all reading directions, joins the rows, and joins each direction
+	# this allows you to check if a word is in the puzzle in any direction
+	# I needed to do this because when I place a new word, I don't make sure ahead of
+	# time if the new word will overwrite an old word.
 	def all_rows(self, board = None):
 		if board == None:
 			board = copy.deepcopy(self.board)
@@ -178,7 +186,7 @@ class Puzzle():
 				or2 = randint(-1, 1)
 			orientation = [or1, or2]
 			loop_iteration+=1
-			if loop_iteration > 10: 
+			if loop_iteration > 10: # a check to make sure if a word isn't fitting, it won't loop forever. This shouldn't happen too often.
 				fit = 0
 				break
 		if fit == 1:
@@ -192,7 +200,7 @@ class Puzzle():
 		   doesn't overwrite any old words'''
 		remaining_words = [word.upper() for word in self.word_list]
 		remaining_words.sort(key = len)
-		remaining_words = remaining_words[::-1] # Longer words are placed first
+		remaining_words = remaining_words[::-1] # Bigger words are placed first
 		used_words = []
 		
 		while len(remaining_words) > 0:
@@ -222,6 +230,11 @@ class Puzzle():
 		print('\nWords to find:')
 		print(words)
 
+
+MyPuzzle = Puzzle(w_list)
+MyPuzzle.generate_board()
+MyPuzzle.print_hidden()
 if print_key == True:
 	print('\nKey:')
 	MyPuzzle.print_board()
+
