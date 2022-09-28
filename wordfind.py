@@ -1,5 +1,4 @@
 from random import randint
-import numpy as np
 import copy
 
 
@@ -25,7 +24,6 @@ class Puzzle():
 			if length > max_length:
 				max_length = length
  
- 		min_length = max([max_length + 4, int(np.floor( 0.002* (len(word_list)-20) - 0.05 * (len(word_list)-20)**2 + 25)), 10])
 		
 		if self.rows < min_length: 
 			self.rows = min_length
@@ -224,9 +222,6 @@ class Puzzle():
 		print('\nWords to find:')
 		print(words)
 
-MyPuzzle = Puzzle(w_list)
-MyPuzzle.generate_board()
-MyPuzzle.print_hidden()
 if print_key == True:
 	print('\nKey:')
 	MyPuzzle.print_board()
